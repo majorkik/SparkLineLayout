@@ -21,25 +21,13 @@ class SparkLineLayout @JvmOverloads constructor(
         private val SPARKLINE_COLOR = Color.parseColor("#222222")
         private const val SPARKLINE_THICKNESS = 2F
         private const val SPARKLINE_BEZIER = 0.5F
-        private val GUIDELINES_STYLE = GuidelineStyle.DEFAULT
-        private val GUIDELINES_COLOR = Color.parseColor("#EEEEEE")
-        private const val GUIDELINES_THICKNESS = 1F
         private const val MARKER_WIDTH = 3F
         private const val MARKER_HEIGHT = 3F
-        private const val MARKER_RADIUS = 0F
+        private const val MARKER_CORNER_RADIUS = 0F
         private val MARKER_BACKGROUND_COLOR = Color.parseColor("#222222")
         private val MARKER_BORDER_COLOR = Color.parseColor("#FFFFFF")
         private const val MARKER_BORDER_SIZE = 1F
-        private const val MARKER_DIAMOND_STYLE = false
-    }
-
-    /*
-    ENUM styles
-     */
-    enum class GuidelineStyle(private val id: Int) {
-        DEFAULT(1),
-        DOTS(2),
-        DASHS(3)
+        private const val MARKER_IS_CIRCLE_STYLE = false
     }
 
     /*
@@ -66,24 +54,6 @@ class SparkLineLayout @JvmOverloads constructor(
             invalidate()
         }
 
-    var guidelinesStyle: GuidelineStyle = GUIDELINES_STYLE
-        set(value) {
-            field = value
-            initPaint()
-            invalidate()
-        }
-    var guidelinesColor: Int = GUIDELINES_COLOR
-        set(value) {
-            field = value
-            initPaint()
-            invalidate()
-        }
-    var guidelinesThickness: Float = GUIDELINES_THICKNESS
-        set(value) {
-            field = value
-            initPaint()
-            invalidate()
-        }
     var markerWidth: Float = MARKER_WIDTH
         set(value) {
             field = value
@@ -96,7 +66,7 @@ class SparkLineLayout @JvmOverloads constructor(
             initPaint()
             invalidate()
         }
-    var markerRadius: Float = MARKER_RADIUS
+    var markerCornerRadius: Float = MARKER_CORNER_RADIUS
         set(value) {
             field = value
             initPaint()
@@ -120,7 +90,7 @@ class SparkLineLayout @JvmOverloads constructor(
             initPaint()
             invalidate()
         }
-    var markerDiamondStyle: Boolean = MARKER_DIAMOND_STYLE
+    var markerIsCircleStyle: Boolean = MARKER_IS_CIRCLE_STYLE
         set(value) {
             field = value
             initPaint()
@@ -132,13 +102,11 @@ class SparkLineLayout @JvmOverloads constructor(
      */
     var paintSparkLine: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     var paintMarker: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    var paintGuideline: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-
+    var paintMarkerStroke: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     /*
     Path
      */
     var pathSparkLine: Path = Path()
-    var pathGuideLine: Path = Path()
     /*
     Data
      */
@@ -159,12 +127,46 @@ class SparkLineLayout @JvmOverloads constructor(
 
             sparkLineColor =
                 styledAttrs.getColor(R.styleable.SparkLineLayout_s_line_color, SPARKLINE_COLOR)
-            sparkLineThickness =
+
+            sparkLineThickness = styledAttrs.getDimension(
+                R.styleable.SparkLineLayout_s_line_thickness,
+                2F
+            )
+
+            sparkLineBezier =
+                styledAttrs.getFloat(R.styleable.SparkLineLayout_s_line_bezier, SPARKLINE_BEZIER)
+
+            markerWidth =
+                styledAttrs.getDimension(R.styleable.SparkLineLayout_s_marker_width, MARKER_WIDTH)
+
+            markerHeight =
+                styledAttrs.getDimension(R.styleable.SparkLineLayout_s_marker_height, MARKER_HEIGHT)
+
+            markerCornerRadius =
                 styledAttrs.getDimension(
-                    R.styleable.SparkLineLayout_s_line_thickness,
-                    2F
+                    R.styleable.SparkLineLayout_s_marker_radius,
+                    MARKER_CORNER_RADIUS
                 )
 
+            markerBackgroundColor = styledAttrs.getColor(
+                R.styleable.SparkLineLayout_s_marker_background_color,
+                MARKER_BACKGROUND_COLOR
+            )
+
+            markerBorderColor = styledAttrs.getColor(
+                R.styleable.SparkLineLayout_s_marker_border_color,
+                MARKER_BORDER_COLOR
+            )
+
+            markerBorderSize = styledAttrs.getDimension(
+                R.styleable.SparkLineLayout_s_marker_border_size,
+                MARKER_BORDER_SIZE
+            )
+
+            markerIsCircleStyle = styledAttrs.getBoolean(
+                R.styleable.SparkLineLayout_s_marker_is_circle_style,
+                MARKER_IS_CIRCLE_STYLE
+            )
 
 
 
@@ -233,6 +235,13 @@ class SparkLineLayout @JvmOverloads constructor(
         paintSparkLine.color = sparkLineColor
         paintSparkLine.strokeWidth = sparkLineThickness
         paintSparkLine.strokeCap = Paint.Cap.ROUND
+
+        paintMarker.style = Paint.Style.FILL
+        paintMarker.color = markerBackgroundColor
+
+        paintMarkerStroke.style = Paint.Style.STROKE
+        paintMarkerStroke.color = markerBorderColor
+        paintMarkerStroke.strokeWidth = markerBorderSize
     }
 
     private fun drawLine(canvas: Canvas) {
@@ -287,13 +296,38 @@ class SparkLineLayout @JvmOverloads constructor(
         val xStep = measuredWidth / data.count()
         val yStep = measuredHeight / data.max()!!
         val xStepPadding = xStep / 2F
+
         for (i in 0 until data.size) {
-            canvas.drawCircle(
-                (i * xStep + xStepPadding),
-                (data.max()!! * yStep) - (data[i] * yStep).toFloat(),
-                4F,
+            drawMarker(
+                canvas, (i * xStep + xStepPadding),
+                (data.max()!! * yStep) - (data[i] * yStep).toFloat()
+            )
+        }
+    }
+
+    private fun drawMarker(canvas: Canvas, x: Float, y: Float) {
+        if (markerIsCircleStyle) {
+            canvas.drawCircle(x, y, markerWidth / 2, paintMarker)
+            if (markerBorderSize > 0) {
+                canvas.drawCircle(x, y, markerWidth / 2, paintMarkerStroke)
+            }
+        } else {
+            canvas.drawRect(
+                x - (markerWidth / 2),
+                y - (markerHeight / 2),
+                x + (markerWidth / 2),
+                y + (markerHeight / 2),
                 paintMarker
             )
+            if (markerBorderSize > 0) {
+                canvas.drawRect(
+                    x - (markerWidth / 2),
+                    y - (markerHeight / 2),
+                    x + (markerWidth / 2),
+                    y + (markerHeight / 2),
+                    paintMarkerStroke
+                )
+            }
         }
     }
 }

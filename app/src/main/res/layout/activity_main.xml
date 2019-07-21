@@ -20,7 +20,7 @@
         <com.majorik.sparklinelibrary.SparkLineLayout
             android:id="@+id/spark"
             android:layout_width="match_parent"
-            android:layout_height="250dp" />
+            android:layout_height="200dp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -38,10 +38,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Marker size" />
+            android:text="Marker size (if rect width) " />
 
         <SeekBar
-            android:id="@+id/sb_marker_size"
+            android:id="@+id/sb_marker_size_width"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Marker height (if rect)" />
+
+        <SeekBar
+            android:id="@+id/sb_marker_size_height"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp" />
@@ -57,5 +69,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/button_marker_change"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Marker = circle" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Border size" />
+
+        <SeekBar
+            android:id="@+id/sb_border_size"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Guidelines thickness" />
+
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
