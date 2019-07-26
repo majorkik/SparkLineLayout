@@ -8,6 +8,7 @@ import android.view.View
 import kotlin.math.*
 import kotlin.random.Random
 
+
 class SparkLineLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -25,7 +26,7 @@ class SparkLineLayout @JvmOverloads constructor(
         private const val MARKER_HEIGHT = 3F
         private const val MARKER_CORNER_RADIUS = 0F
         private val MARKER_BACKGROUND_COLOR = Color.parseColor("#222222")
-        private val MARKER_BORDER_COLOR = Color.parseColor("#FFFFFF")
+        private val MARKER_BORDER_COLOR = Color.parseColor("#222222")
         private const val MARKER_BORDER_SIZE = 1F
         private const val MARKER_IS_CIRCLE_STYLE = false
     }
@@ -103,10 +104,12 @@ class SparkLineLayout @JvmOverloads constructor(
     var paintSparkLine: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     var paintMarker: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     var paintMarkerStroke: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
     /*
     Path
      */
     var pathSparkLine: Path = Path()
+
     /*
     Data
      */
@@ -117,6 +120,9 @@ class SparkLineLayout @JvmOverloads constructor(
             invalidate()
         }
 
+    /*
+    Local vars
+     */
 
     init {
         if (attrs != null) {
@@ -174,7 +180,9 @@ class SparkLineLayout @JvmOverloads constructor(
         }
 
         if (isInEditMode) {
-            data = arrayListOf(1, 2, 3, 2, 6, 4, 5, 9, 1, 3, 6, 5, 4, 7, 2, 1, 9, 4)
+            data = arrayListOf(
+                1, 2, 2, 3, 4, 0, -15, 5, 6, 15, 8, 8, 8, 8
+            )
         } else {
             //random data
             for (i in 0..25) {
@@ -245,43 +253,63 @@ class SparkLineLayout @JvmOverloads constructor(
     }
 
     private fun drawLine(canvas: Canvas) {
-        val xStep = measuredWidth / data.count()
-        val yStep = measuredHeight / data.max()!!
+        if (data.size < 2) {
+            return
+        }
+
+        val max: Int = data.max() ?: 0
+        val min: Int = data.min() ?: 0
+
+        val xStep: Float = (measuredWidth / (data.count() - 1)).toFloat()
+        val yStep: Float = (measuredHeight / (max - min)).toFloat()
 
         pathSparkLine = Path().apply {
-            val chartMaxHeight = (data.max()!! * yStep)
-            var xStart = (0f + (xStep / 2F))
+            measuredHeight
+            var xStart = 0f
 
-            moveTo(xStep / 4.0F, chartMaxHeight - (data.first() * yStep).toFloat())
+            moveTo(xStart, measuredHeight - ((data.first() - min) * yStep))
 
-            for (index in 0 until data.count()) {
-                val prevDx: Float = (xStart - (xStart - xStep)) * sparkLineBezier
-                val prevDy: Float
-                val curDx: Float = ((xStart + xStep) - xStart) * sparkLineBezier
-                val curDy: Float
-
-                val prevVal: Float = if (index > 0) {
-                    data[index - 1].toFloat()
+            for (index in 0 until data.size) {
+                val prevVal: Float = (if (index > 0) {
+                    data[index - 1] - min
                 } else {
-                    data[index].toFloat()
-                }
+                    data[index] - min
+                }).toFloat()
 
-                val nextVal: Float = if (index < data.size - 1) {
-                    data[index + 1].toFloat()
+                val nextVal: Float = (if (index < data.size - 1) {
+                    data[index + 1] - min
                 } else {
-                    data[index].toFloat()
-                }
+                    data[index] - min
+                }).toFloat()
 
-                prevDy = (data[index] - prevVal) * sparkLineBezier
-                curDy = (nextVal - data[index]) * sparkLineBezier
+                val prevD = PointF(
+                    (xStart - (xStart - xStep)) * sparkLineBezier,
+                    ((data[index] - min) - prevVal) * sparkLineBezier
+                )
+
+                val curD = PointF(
+                    ((xStart + xStep) - xStart) * sparkLineBezier,
+                    (nextVal - (data[index] - min)) * sparkLineBezier
+                )
+
+                val controlPoint1 = PointF(
+                    (xStart - xStep) + prevD.x,
+                    ((measuredHeight - (prevVal * yStep)) - prevD.y)
+                )
+                val controlPoint2 = PointF(
+                    xStart - curD.x,
+                    (measuredHeight - ((data[index] - min) * yStep)) + curD.y
+                )
+
+                val currentPoint = PointF(xStart, measuredHeight - ((data[index] - min) * yStep))
 
                 this.cubicTo(
-                    (xStart - xStep) + prevDx,
-                    ((chartMaxHeight - (prevVal * yStep)) - prevDy),
-                    xStart - curDx,
-                    ((chartMaxHeight - (data[index] * yStep)) + curDy),
-                    xStart,
-                    (chartMaxHeight - (data[index] * yStep)).toFloat()
+                    controlPoint1.x,
+                    controlPoint1.y,
+                    controlPoint2.x,
+                    controlPoint2.y,
+                    currentPoint.x,
+                    currentPoint.y
                 )
 
                 xStart += xStep
@@ -293,15 +321,18 @@ class SparkLineLayout @JvmOverloads constructor(
     }
 
     private fun drawMarkers(canvas: Canvas) {
-        val xStep = measuredWidth / data.count()
-        val yStep = measuredHeight / data.max()!!
-        val xStepPadding = xStep / 2F
+
+        val max: Int = data.max() ?: 0
+        val min: Int = data.min() ?: 0
+
+        val xStep: Float = (measuredWidth / (data.count() - 1)).toFloat()
+        val yStep: Float = (measuredHeight / (max - min)).toFloat()
 
         for (i in 0 until data.size) {
-            drawMarker(
-                canvas, (i * xStep + xStepPadding),
-                (data.max()!! * yStep) - (data[i] * yStep).toFloat()
-            )
+            val x: Float = i * xStep
+            val y: Float = measuredHeight - yStep * (data[i] - min)
+
+            drawMarker(canvas, x, y)
         }
     }
 
@@ -329,5 +360,20 @@ class SparkLineLayout @JvmOverloads constructor(
                 )
             }
         }
+    }
+
+    private fun calcProgressPoint(
+        p1: Float,
+        p2: Float,
+        p3: Float,
+        p4: Float,
+        t: Float
+    ): Float {
+        val x1 = (1 - t).pow(3.0F) * p1
+        val x2 = 3 * t * (1 - t).pow(2.0F) * p2
+        val x3 = 3 * t.pow(2.0F) * (1 - t) * p3
+        val x4 = t.pow(3.0F) * p4
+
+        return x1 + x2 + x3 + x4
     }
 }
