@@ -18,9 +18,9 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.majorik.sparklinelibrary.SparkLineLayout
-            android:id="@+id/spark"
-            android:layout_width="match_parent"
-            android:layout_height="200dp" />
+          android:id="@+id/spark"
+          android:layout_width="match_parent"
+          android:layout_height="200dp" />
 
         <TextView
             android:layout_width="match_parent"
