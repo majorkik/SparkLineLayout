@@ -8,7 +8,6 @@ import android.view.View
 import com.majorik.sparklinelibrary.data.CurvePoints
 import com.majorik.sparklinelibrary.extensions.cubicTo
 import kotlin.math.*
-import kotlin.random.Random
 
 
 class SparkLineLayout @JvmOverloads constructor(
@@ -22,6 +21,9 @@ class SparkLineLayout @JvmOverloads constructor(
      */
     companion object DefaultAttrs {
         private val SPARKLINE_COLOR = Color.parseColor("#222222")
+        private val SPARKLINE_SECOND_COLOR = Color.parseColor("#222222")
+        private val LINE_SPLIT_LEFT_COLOR = Color.parseColor("#222222")
+        private val LINE_SPLIT_RIGHT_COLOR = Color.parseColor("#222222")
         private const val SPARKLINE_THICKNESS = 2F
         private const val SPARKLINE_BEZIER = 0.5F
         private const val MARKER_WIDTH = 3F
@@ -37,80 +39,21 @@ class SparkLineLayout @JvmOverloads constructor(
     Attrs
      */
     var sparkLineColor: Int = SPARKLINE_COLOR
-        set(value) {
-            field = value
-            initPaint()
-            invalidate()
-        }
-
+    var sparkLineSecondColor: Int = SPARKLINE_SECOND_COLOR
     var sparkLineThickness: Float = SPARKLINE_THICKNESS
-        set(value) {
-            field = value
-            initPaint()
-            invalidate()
-        }
-
     var sparkLineBezier: Float = SPARKLINE_BEZIER
-        set(value) {
-            field = value
-            initPaint()
-            invalidate()
-        }
-
     var markerWidth: Float = MARKER_WIDTH
-        set(value) {
-            field = value
-            initPaint()
-            invalidate()
-        }
     var markerHeight: Float = MARKER_HEIGHT
-        set(value) {
-            field = value
-            initPaint()
-            invalidate()
-        }
     var markerCornerRadius: Float = MARKER_CORNER_RADIUS
-        set(value) {
-            field = value
-            initPaint()
-            invalidate()
-        }
     var markerBackgroundColor: Int = MARKER_BACKGROUND_COLOR
-        set(value) {
-            field = value
-            initPaint()
-            invalidate()
-        }
     var markerBorderColor: Int = MARKER_BORDER_COLOR
-        set(value) {
-            field = value
-            initPaint()
-            invalidate()
-        }
     var markerBorderSize: Float = MARKER_BORDER_SIZE
-        set(value) {
-            field = value
-            initPaint()
-            invalidate()
-        }
     var markerIsCircleStyle: Boolean = MARKER_IS_CIRCLE_STYLE
-        set(value) {
-            field = value
-            initPaint()
-            invalidate()
-        }
-
     var lineRatio: Float = 0.5F
-        set(value) {
-            field = value
-            invalidate()
-        }
-
     var isSplitLine = false
-        set(value) {
-            field = value
-            invalidate()
-        }
+    var lineSplitLeftColor = LINE_SPLIT_LEFT_COLOR
+    var lineSplitRightColor = LINE_SPLIT_RIGHT_COLOR
+
     /*
     Paint
      */
@@ -125,25 +68,23 @@ class SparkLineLayout @JvmOverloads constructor(
      */
     var pathSparkLine: Path = Path()
     var pathLineLeft: Path = Path()
-    var pathLineRight: Path = Path()
-
     /*
     Data
      */
-    var data: ArrayList<Int> = arrayListOf()
-        set(value) {
-            field.clear()
-            field = value
-            invalidate()
-        }
+    var inputData: ArrayList<Int> = arrayListOf()
+
+    private var data: ArrayList<Float> = arrayListOf()
+
+    var pathLineRight: Path = Path()
 
     /*
     Local vars
      */
-    private var dataMax: Int = 0
-    private var dataMin: Int = 0
+    private var dataMax: Float = 0f
+    private var dataMin: Float = 0f
     private var xStep: Float = 0F
     private var yStep: Float = 0F
+    private var heightPadding: Float = 0F
 
     init {
         if (attrs != null) {
@@ -195,24 +136,27 @@ class SparkLineLayout @JvmOverloads constructor(
                 MARKER_IS_CIRCLE_STYLE
             )
 
-
-
             styledAttrs.recycle()
         }
 
+
         if (isInEditMode) {
-            data = arrayListOf(
-                1, 2, 2, 3, 4, 0, -15, 5, 6, 15, 8, 8, 8, 8
+            setData(
+                arrayListOf(
+                    298, 46, 87, 178, 446, 1167, 1855, 1543, 662, 1583
+                )
             )
+
         } else {
             //random data
-            for (i in 0..25) {
-                val random = Random.nextInt(25)
-                data.add(random)
-            }
+//            data = arrayListOf(
+//                298, 46, 87, 178, 446, 1167, 1855, 1543, 662, 1583
+//            )
+//            for (i in 0..25) {
+//                val random = Random.nextInt(25)
+//                data.add(random)
+//            }
         }
-
-        initPaint()
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -241,6 +185,7 @@ class SparkLineLayout @JvmOverloads constructor(
         )
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        initPaint()
     }
 
     private fun measureDimension(desiredSize: Int, measureSpec: Int): Int {
@@ -264,11 +209,50 @@ class SparkLineLayout @JvmOverloads constructor(
         return result
     }
 
+    private fun setData(arrayData: ArrayList<Int>) {
+        inputData = arrayData
+
+        val num = getCountNumForMaxNum(inputData.max() ?: 0)
+
+        inputData.forEach {
+            data.add(it * num)
+        }
+    }
+
+    private fun getCountNumForMaxNum(num: Int): Float {
+        var n = 0.1F
+        return if (num > 100) {
+            for (i in 0 until 8) {
+                if (num * n < 100) {
+                    break
+                } else {
+                    n *= 0.1F
+                }
+            }
+            n
+        } else {
+            1F
+        }
+    }
+
+
     private fun initPaint() {
         paintSparkLine.color = sparkLineColor
         paintSparkLine.strokeWidth = sparkLineThickness
         paintSparkLine.strokeCap = Paint.Cap.ROUND
         paintSparkLine.style = Paint.Style.STROKE
+
+        if (sparkLineColor != sparkLineSecondColor) {
+            paintSparkLine.shader = LinearGradient(
+                0F,
+                0F,
+                measuredWidth.toFloat(),
+                0f,
+                sparkLineColor,
+                sparkLineSecondColor,
+                Shader.TileMode.CLAMP
+            )
+        }
 
         paintMarker.style = Paint.Style.FILL
         paintMarker.color = markerBackgroundColor
@@ -277,22 +261,23 @@ class SparkLineLayout @JvmOverloads constructor(
         paintMarkerStroke.color = markerBorderColor
         paintMarkerStroke.strokeWidth = markerBorderSize
 
-        paintLineLeft.color = Color.RED
+        paintLineLeft.color = lineSplitLeftColor
         paintLineLeft.strokeWidth = sparkLineThickness
         paintLineLeft.strokeCap = Paint.Cap.ROUND
         paintLineLeft.style = Paint.Style.STROKE
 
-        paintLineRight.color = Color.GREEN
+        paintLineRight.color = lineSplitRightColor
         paintLineRight.strokeWidth = sparkLineThickness
         paintLineRight.strokeCap = Paint.Cap.ROUND
         paintLineRight.style = Paint.Style.STROKE
     }
 
     private fun initLocalVars() {
-        dataMax = data.max() ?: 0
-        dataMin = data.min() ?: 0
-        xStep = (measuredWidth / (data.count() - 1)).toFloat()
-        yStep = (measuredHeight / (dataMax - dataMin)).toFloat()
+        dataMax = data.max() ?: 0f
+        dataMin = data.min() ?: 0f
+        xStep = measuredWidth / ((data.count() - 1)).toFloat()
+        heightPadding = (markerHeight + sparkLineThickness)
+        yStep = (measuredHeight - (heightPadding * 2)) / ((dataMax - dataMin))
 
         if (lineRatio < 0F) {
             lineRatio = 0F
@@ -309,7 +294,7 @@ class SparkLineLayout @JvmOverloads constructor(
         pathSparkLine = Path().apply {
             var xStart = 0f
 
-            moveTo(xStart, measuredHeight - ((data.first() - dataMin) * yStep))
+            moveTo(xStart, (measuredHeight - heightPadding) - ((data.first() - dataMin) * yStep))
 
             for (index in 0 until data.size) {
                 val prevVal: Float = (if (index > 0) {
@@ -336,15 +321,15 @@ class SparkLineLayout @JvmOverloads constructor(
 
                 val controlPoint1 = PointF(
                     (xStart - xStep) + prevD.x,
-                    ((measuredHeight - (prevVal * yStep)) - prevD.y)
+                    (((measuredHeight - heightPadding) - (prevVal * yStep)) - prevD.y)
                 )
                 val controlPoint2 = PointF(
                     xStart - curD.x,
-                    (measuredHeight - ((data[index] - dataMin) * yStep)) + curD.y
+                    ((measuredHeight - heightPadding) - ((data[index] - dataMin) * yStep)) + curD.y
                 )
 
                 val currentPoint =
-                    PointF(xStart, measuredHeight - ((data[index] - dataMin) * yStep))
+                    PointF(xStart, (measuredHeight - heightPadding) - ((data[index] - dataMin) * yStep))
 
                 this.cubicTo(
                     controlPoint1,
@@ -363,7 +348,7 @@ class SparkLineLayout @JvmOverloads constructor(
     private fun drawMarkers(canvas: Canvas) {
         for (i in 0 until data.size) {
             val x: Float = i * xStep
-            val y: Float = measuredHeight - yStep * (data[i] - dataMin)
+            val y: Float = (measuredHeight - heightPadding) - yStep * (data[i] - dataMin)
 
             drawMarker(canvas, x, y)
         }
@@ -395,25 +380,10 @@ class SparkLineLayout @JvmOverloads constructor(
         }
     }
 
-    private fun calcProgressPoint(
-        p1: Float,
-        p2: Float,
-        p3: Float,
-        p4: Float,
-        t: Float
-    ): Float {
-        val x1 = (1 - t).pow(3.0F) * p1
-        val x2 = 3 * t * (1 - t).pow(2.0F) * p2
-        val x3 = 3 * t.pow(2.0F) * (1 - t) * p3
-        val x4 = t.pow(3.0F) * p4
-
-        return x1 + x2 + x3 + x4
-    }
-
     private fun drawSplitLine(canvas: Canvas) {
         var xStart = 0F
         val numPoint = calculateSplitNumPoint()
-        val t: Float = calculateRationBetweenPoints()
+        val t: Float = calculateRatioBetweenPoints()
 
         pathLineLeft.moveTo(xStart, measuredHeight - ((data.first() - dataMin) * yStep))
 
@@ -525,7 +495,7 @@ class SparkLineLayout @JvmOverloads constructor(
         return ceil(widthRatio / xStep).toInt()
     }
 
-    private fun calculateRationBetweenPoints(): Float {
+    private fun calculateRatioBetweenPoints(): Float {
         if (lineRatio == 1.0F) {
             return 1F
         }

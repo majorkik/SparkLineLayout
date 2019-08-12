@@ -20,7 +20,7 @@
         <com.majorik.sparklinelibrary.SparkLineLayout
           android:id="@+id/spark"
           android:layout_width="match_parent"
-          android:layout_height="200dp" />
+          android:layout_height="100dp" />
 
         <TextView
             android:layout_width="match_parent"
