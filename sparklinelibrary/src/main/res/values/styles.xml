@@ -2,14 +2,13 @@
 
     <style name="SparkLineLayoutStyle">
         <item name="s_line_color">#222222</item>
-        <item name="s_line_thickness">2dp</item>
-        <item name="s_marker_width">2dp</item>
-        <item name="s_marker_height">2dp</item>
-        <item name="s_marker_radius">2dp</item>
+        <item name="s_line_thickness">0dp</item>
+        <item name="s_marker_width">0dp</item>
+        <item name="s_marker_height">0dp</item>
+        <item name="s_marker_radius">0dp</item>
         <item name="s_marker_background_color">#222222</item>
         <item name="s_marker_border_color">#222222</item>
-        <item name="s_marker_border_size">2dp</item>
-
+        <item name="s_marker_border_size">0dp</item>
     </style>
 
 </resources>

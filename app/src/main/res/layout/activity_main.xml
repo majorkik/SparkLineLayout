@@ -4,97 +4,125 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#212121"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.majorik.sparklinelibrary.SparkLineLayout
-          android:id="@+id/spark"
-          android:layout_width="match_parent"
-          android:layout_height="100dp" />
-
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Line size" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <SeekBar
-            android:id="@+id/sb_line_size"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
+            <com.majorik.sparklinelibrary.SparkLineLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="#212121"
+                app:s_line_color="#FFC107"
+                app:s_line_thickness="2dp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Marker size (if rect width) " />
+            <com.majorik.sparklinelibrary.SparkLineLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="#212121"
+                app:s_is_gradient_line="true"
+                app:s_line_color="#fed32c"
+                app:s_line_second_color="#FF5722"
+                app:s_line_thickness="4dp" />
 
-        <SeekBar
-            android:id="@+id/sb_marker_size_width"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
+            <com.majorik.sparklinelibrary.SparkLineLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="#212121"
+                app:s_line_color="#fed32c"
+                app:s_line_thickness="4dp"
+                app:s_marker_background_color="#fed32c"
+                app:s_marker_is_circle_style="true"
+                app:s_marker_width="8dp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Marker height (if rect)" />
+            <com.majorik.sparklinelibrary.SparkLineLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="#212121"
+                app:s_line_color="#fed32c"
+                app:s_line_thickness="3dp"
+                app:s_marker_background_color="#fed32c"
+                app:s_marker_height="6dp"
+                app:s_marker_width="6dp" />
 
-        <SeekBar
-            android:id="@+id/sb_marker_size_height"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
+            <com.majorik.sparklinelibrary.SparkLineLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="#212121"
+                app:s_line_color="#fed32c"
+                app:s_line_thickness="3dp"
+                app:s_marker_background_color="#fed32c"
+                app:s_marker_border_color="#212121"
+                app:s_marker_border_size="2dp"
+                app:s_marker_is_circle_style="true"
+                app:s_marker_width="8dp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Bezier curve (0.0 - 1.0)" />
+            <com.majorik.sparklinelibrary.SparkLineLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="#212121"
+                app:s_line_color="#fed32c"
+                app:s_line_thickness="2dp"
+                app:s_marker_background_color="#fed32c"
+                app:s_marker_border_color="#212121"
+                app:s_marker_border_size="1dp"
+                app:s_marker_height="2dp"
+                app:s_marker_width="1dp" />
 
-        <SeekBar
-            android:id="@+id/sb_line_bezier"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
+            <com.majorik.sparklinelibrary.SparkLineLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="#212121"
+                app:s_line_color="#fed32c"
+                app:s_line_split_left_color="#fed32c"
+                app:s_line_split_right_color="#575757"
+                app:s_line_thickness="3dp"
+                app:s_marker_background_color="#fed32c"
+                app:s_split_line="true"
+                app:s_split_ratio="0.75" />
 
-        <Button
-            android:id="@+id/button_marker_change"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Marker = circle" />
+            <com.majorik.sparklinelibrary.SparkLineLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="#212121"
+                app:s_line_color="#fed32c"
+                app:s_line_split_left_color="#fed32c"
+                app:s_line_split_right_color="#00ffffff"
+                app:s_line_thickness="4dp"
+                app:s_marker_background_color="#fed32c"
+                app:s_split_line="true"
+                app:s_split_ratio="0.75" />
 
+            <com.majorik.sparklinelibrary.SparkLineLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="#212121"
+                app:s_line_color="#fed32c"
+                app:s_line_thickness="3dp"
+                app:s_line_bezier="0" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Border size" />
-
-        <SeekBar
-            android:id="@+id/sb_border_size"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Guidelines thickness" />
-
-    </LinearLayout>
-
+            <com.majorik.sparklinelibrary.SparkLineLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="#212121"
+                app:s_line_color="#fed32c"
+                app:s_line_thickness="2dp"
+                app:s_marker_background_color="#fed32c"
+                app:s_marker_is_circle_style="true"
+                app:s_marker_width="6dp"
+                app:s_line_bezier="1" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
