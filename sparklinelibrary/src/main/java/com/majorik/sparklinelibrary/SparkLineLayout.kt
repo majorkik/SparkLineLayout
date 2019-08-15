@@ -164,7 +164,7 @@ class SparkLineLayout @JvmOverloads constructor(
             )
 
             markerIsCircleStyle = styledAttrs.getBoolean(
-                R.styleable.SparkLineLayout_s_marker_is_circle_style,
+                R.styleable.SparkLineLayout_s_marker_circle_style,
                 MARKER_IS_CIRCLE_STYLE
             )
 
@@ -179,7 +179,7 @@ class SparkLineLayout @JvmOverloads constructor(
             )
 
             isGradientLine = styledAttrs.getBoolean(
-                R.styleable.SparkLineLayout_s_is_gradient_line,
+                R.styleable.SparkLineLayout_s_gradient_line,
                 IS_GRADIENT_LINE
             )
 
@@ -189,12 +189,12 @@ class SparkLineLayout @JvmOverloads constructor(
             )
 
             lineSplitLeftColor = styledAttrs.getColor(
-                R.styleable.SparkLineLayout_s_line_split_left_color,
+                R.styleable.SparkLineLayout_s_split_left_color,
                 LINE_SPLIT_LEFT_COLOR
             )
 
             lineSplitRightColor = styledAttrs.getColor(
-                R.styleable.SparkLineLayout_s_line_split_right_color,
+                R.styleable.SparkLineLayout_s_split_right_color,
                 LINE_SPLIT_RIGHT_COLOR
             )
 
@@ -289,27 +289,30 @@ class SparkLineLayout @JvmOverloads constructor(
     }
 
     fun setData(arrayData: ArrayList<Int>) {
+        inputData.clear()
+        data.clear()
         inputData = arrayData
 
         val num = getCountNumForMaxNum(inputData.max() ?: 0)
 
-        inputData.forEach { data.add(it * num) }
+        inputData.forEach {
+            data.add(it * num)
+        }
     }
 
     private fun getCountNumForMaxNum(num: Int): Float {
         var n = 0.1F
-        when {
-            num > 100 -> {
-                for (i in 0 until 8) {
-                    if (num * n >= 100) {
-                        n *= 0.1F
-                    } else {
-                        break
-                    }
+        return if (num > 100) {
+            for (i in 0 until 8) {
+                if (num * n < 100) {
+                    break
+                } else {
+                    n *= 0.1F
                 }
-                return n
             }
-            else -> return 1F
+            n
+        } else {
+            1F
         }
     }
 
@@ -350,17 +353,17 @@ class SparkLineLayout @JvmOverloads constructor(
         paintLineRight.style = Paint.Style.STROKE
 
         paintSparkLineFill.style = Paint.Style.FILL
-        paintSparkLine.color = sparkLineColor
+        paintSparkLineFill.color = sparkLineColor
     }
 
     private fun initLocalVars() {
         dataMax = data.max() ?: 0f
         dataMin = data.min() ?: 0f
         val markerH = if (markerIsCircleStyle) markerWidth else markerHeight
-        heightPadding = (markerH + sparkLineThickness * 2) * 2
+        heightPadding = (markerH + sparkLineThickness * 2)
 
-        xStep = (measuredWidth - heightPadding) / (data.count() - 1F)
-        yStep = (measuredHeight - heightPadding) / (dataMax - dataMin)
+        xStep = (measuredWidth - (heightPadding * 2)) / ((data.count() - 1)).toFloat()
+        yStep = (measuredHeight - (heightPadding * 2)) / ((dataMax - dataMin))
 
         when {
             splitLineRatio < 0F -> splitLineRatio = 0F
@@ -543,8 +546,8 @@ class SparkLineLayout @JvmOverloads constructor(
             xStart += xStep
         }
 
-        canvas.drawPath(pathLineLeft, paintLineLeft)
         canvas.drawPath(pathLineRight, paintLineRight)
+        canvas.drawPath(pathLineLeft, paintLineLeft)
     }
 
     private fun calculateSplitNumPoint(): Int {

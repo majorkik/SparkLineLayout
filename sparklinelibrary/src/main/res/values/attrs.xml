@@ -7,12 +7,12 @@
         <attr name="s_line_second_color" format="color|reference" />
         <attr name="s_line_thickness" format="dimension|reference" />
         <attr name="s_line_bezier" format="float|reference" />
-        <attr name="s_is_gradient_line" format="boolean|reference" />
+        <attr name="s_gradient_line" format="boolean|reference" />
 
         <attr name="s_split_line" format="boolean|reference" />
         <attr name="s_split_ratio" format="float|reference" />
-        <attr name="s_line_split_left_color" format="color|reference" />
-        <attr name="s_line_split_right_color" format="color|reference" />
+        <attr name="s_split_left_color" format="color|reference" />
+        <attr name="s_split_right_color" format="color|reference" />
 
         <attr name="s_marker_width" format="dimension|reference" />
         <attr name="s_marker_height" format="dimension|reference" />
@@ -22,7 +22,7 @@
         <attr name="s_marker_border_color" format="color|reference" />
         <attr name="s_marker_border_size" format="dimension|reference" />
 
-        <attr name="s_marker_is_circle_style" format="boolean|reference" />
+        <attr name="s_marker_circle_style" format="boolean|reference" />
 
         <attr name="s_split_line_mode" format="enum">
             <enum name="none" value="0" />

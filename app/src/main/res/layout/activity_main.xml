@@ -19,11 +19,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="32dp"
             android:orientation="vertical">
 
             <com.majorik.sparklinelibrary.SparkLineLayout
+                android:id="@+id/sparkline"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
                 android:background="#212121"
                 app:s_line_color="#FFC107"
                 app:s_line_thickness="2dp" />
@@ -31,8 +38,10 @@
             <com.majorik.sparklinelibrary.SparkLineLayout
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
                 android:background="#212121"
-                app:s_is_gradient_line="true"
+                app:s_gradient_line="true"
                 app:s_line_color="#fed32c"
                 app:s_line_second_color="#FF5722"
                 app:s_line_thickness="4dp" />
@@ -40,38 +49,46 @@
             <com.majorik.sparklinelibrary.SparkLineLayout
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
                 android:background="#212121"
                 app:s_line_color="#fed32c"
                 app:s_line_thickness="4dp"
                 app:s_marker_background_color="#fed32c"
-                app:s_marker_is_circle_style="true"
+                app:s_marker_circle_style="true"
                 app:s_marker_width="8dp" />
 
             <com.majorik.sparklinelibrary.SparkLineLayout
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
                 android:background="#212121"
                 app:s_line_color="#fed32c"
                 app:s_line_thickness="3dp"
-                app:s_marker_background_color="#fed32c"
+                app:s_marker_background_color="#FF9800"
                 app:s_marker_height="6dp"
                 app:s_marker_width="6dp" />
 
             <com.majorik.sparklinelibrary.SparkLineLayout
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
                 android:background="#212121"
                 app:s_line_color="#fed32c"
                 app:s_line_thickness="3dp"
                 app:s_marker_background_color="#fed32c"
                 app:s_marker_border_color="#212121"
                 app:s_marker_border_size="2dp"
-                app:s_marker_is_circle_style="true"
+                app:s_marker_circle_style="true"
                 app:s_marker_width="8dp" />
 
             <com.majorik.sparklinelibrary.SparkLineLayout
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
                 android:background="#212121"
                 app:s_line_color="#fed32c"
                 app:s_line_thickness="2dp"
@@ -84,45 +101,53 @@
             <com.majorik.sparklinelibrary.SparkLineLayout
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
                 android:background="#212121"
                 app:s_line_color="#fed32c"
-                app:s_line_split_left_color="#fed32c"
-                app:s_line_split_right_color="#575757"
                 app:s_line_thickness="3dp"
                 app:s_marker_background_color="#fed32c"
+                app:s_split_left_color="#fed32c"
                 app:s_split_line="true"
-                app:s_split_ratio="0.75" />
+                app:s_split_ratio="0.75"
+                app:s_split_right_color="#575757" />
 
             <com.majorik.sparklinelibrary.SparkLineLayout
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
                 android:background="#212121"
                 app:s_line_color="#fed32c"
-                app:s_line_split_left_color="#fed32c"
-                app:s_line_split_right_color="#00ffffff"
                 app:s_line_thickness="4dp"
                 app:s_marker_background_color="#fed32c"
+                app:s_split_left_color="#fed32c"
                 app:s_split_line="true"
-                app:s_split_ratio="0.75" />
+                app:s_split_ratio="0.75"
+                app:s_split_right_color="#00ffffff" />
 
             <com.majorik.sparklinelibrary.SparkLineLayout
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
                 android:background="#212121"
+                app:s_line_bezier="0"
                 app:s_line_color="#fed32c"
-                app:s_line_thickness="3dp"
-                app:s_line_bezier="0" />
+                app:s_line_thickness="3dp" />
 
             <com.majorik.sparklinelibrary.SparkLineLayout
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
                 android:background="#212121"
+                app:s_line_bezier="1"
                 app:s_line_color="#fed32c"
                 app:s_line_thickness="2dp"
                 app:s_marker_background_color="#fed32c"
-                app:s_marker_is_circle_style="true"
-                app:s_marker_width="6dp"
-                app:s_line_bezier="1" />
+                app:s_marker_circle_style="true"
+                app:s_marker_width="6dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
