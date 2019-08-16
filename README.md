@@ -2,18 +2,49 @@
     <img src="screenshots/Main image.png">
 </p>
 
-[![Platform](https://img.shields.io/badge/platform-Android-yellow.svg)](https://www.android.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Platform](https://img.shields.io/badge/platform-Android-brightgreen.svg)](https://www.android.com)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-SparkLineLayout-yellow.svg?style=flat)](https://android-arsenal.com/details/1/7825)
+[![Release](https://img.shields.io/github/release/majorkik/SparkLineLayout.svg?style=flat)](https://jitpack.io/#majorkik/SparkLineLayout)
+[![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](https://opensource.org/licenses/MIT)
 
 # SparkLineLayout
 
 ## Usage
-Just add the following dependency in your app's `build.gradle`
+
+Add it in your root build.gradle at the end of repositories:
 ```groovy
-dependencies {
-      implementation 'com.github.majorkik:SparkLineLayout:1.0.0'
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
 }
 ```
+Add the dependency
+```groovy
+dependencies {
+      implementation 'com.github.majorkik:SparkLineLayout:1.0.1'
+}
+```
+
+Or Maven
+
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+````
+```xml
+<dependency>
+    <groupId>com.github.majorkik</groupId>
+    <artifactId>SparkLineLayout</artifactId>
+    <version>1.0.1</version>
+</dependency>   
+```
+
+
 ## XML
 
 ```xml
@@ -54,17 +85,12 @@ s_marker_border_size | Sets the stroke thickness.
 s_marker_circle_style | Switches marker mode to round. The default **false**, and the marker is square.
 
 ## Examples 
-<p align="center">
-    <img src="screenshots/Examples 1 Curvature.png"><br>
-</p>
 
-<p align="center">
-    <img src="screenshots/Examples 2 Markers.png"><br>
-</p>
+<img src="screenshots/Examples 1 Curvature.png">
 
-<p align="center">
-    <img src="screenshots/Examples 3 Split-lines.png">
-</p>
+<img src="screenshots/Examples 2 Markers.png">
+
+<img src="screenshots/Examples 3 Split-lines.png">
 
 # License
 

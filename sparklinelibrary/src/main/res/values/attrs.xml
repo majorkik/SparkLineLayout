@@ -16,32 +16,11 @@
 
         <attr name="s_marker_width" format="dimension|reference" />
         <attr name="s_marker_height" format="dimension|reference" />
-        <attr name="s_marker_radius" format="dimension|reference" />
         <attr name="s_marker_background_color" format="color|reference" />
 
         <attr name="s_marker_border_color" format="color|reference" />
         <attr name="s_marker_border_size" format="dimension|reference" />
 
         <attr name="s_marker_circle_style" format="boolean|reference" />
-
-        <attr name="s_split_line_mode" format="enum">
-            <enum name="none" value="0" />
-            <enum name="onlyLeft" value="1" />
-            <enum name="onlyRight" value="2" />
-        </attr>
-
-        <attr name="s_split_dots_mode" format="enum">
-            <enum name="none" value="0" />
-            <enum name="onlyLeft" value="1" />
-            <enum name="onlyRight" value="2" />
-            <enum name="singleDot" value="3" />
-            <enum name="auto" value="4" />
-        </attr>
-
-        <attr name="s_line_fill_mode" format="enum|reference">
-            <enum name="disable" value="0" />
-            <enum name="enable" value="1" />
-            <enum name="gradient" value="2" />
-        </attr>
     </declare-styleable>
 </resources>
