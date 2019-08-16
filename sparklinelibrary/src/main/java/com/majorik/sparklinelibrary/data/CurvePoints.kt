@@ -2,9 +2,14 @@ package com.majorik.sparklinelibrary.data
 
 import android.graphics.PointF
 
-/*
-    p1, p2 - first & second points
-    cp1, cp2 - first & second control points
+/**
+ * Data object that stores points for a curve.
+ * (Start and end points and control points for them)
+ *
+ *  p1, p2 - Start & end points
+ *  cp1, cp2 - Start control & end control points
+ *
+ *  @author Belovitskiy Rodion
  */
 
 data class CurvePoints(

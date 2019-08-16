@@ -9,35 +9,19 @@ import com.majorik.sparklinelibrary.data.CurvePoints
 import com.majorik.sparklinelibrary.extensions.cubicTo
 import kotlin.math.ceil
 import kotlin.math.min
-import kotlin.random.Random
 
+/**
+ * SparkLineLayout simple and lightweight for drawing sparkline\graph
+ * without axes.
+ *
+ * @author Belovitskiy Rodion
+ */
 
 class SparkLineLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
-    enum class SplitLineMode(val id: Int) {
-        NONE(0),
-        ONLY_LEFT(1),
-        ONLY_RIGHT(2);
-
-        companion object {
-            fun fromId(id: Int) = values().firstOrNull { it.id == id } ?: NONE
-        }
-    }
-
-    enum class SplitDotsMode(val id: Int) {
-        NONE(0),
-        ONLY_LEFT(1),
-        ONLY_RIGHT(2),
-        SINGLE_DOT(3),
-        AUTO(4);
-
-        companion object {
-            fun fromId(id: Int) = values().firstOrNull { it.id == id } ?: NONE
-        }
-    }
 
     /*
      Default vars
@@ -51,7 +35,6 @@ class SparkLineLayout @JvmOverloads constructor(
         private const val SPARKLINE_BEZIER = 0.5F
         private const val MARKER_WIDTH = 0F
         private const val MARKER_HEIGHT = 0F
-        private const val MARKER_CORNER_RADIUS = 0F
         private val MARKER_BACKGROUND_COLOR = Color.parseColor("#222222")
         private val MARKER_BORDER_COLOR = Color.parseColor("#222222")
         private const val MARKER_BORDER_SIZE = 0F
@@ -59,8 +42,6 @@ class SparkLineLayout @JvmOverloads constructor(
         private const val IS_SPLIT_LINE = false
         private const val IS_GRADIENT_LINE = false
         private const val SPLIT_LINE_RATIO = 0.5F
-        private val SPLIT_LINE_MODE = SplitLineMode.NONE
-        private val SPLIT_DOTS_MODE = SplitDotsMode.NONE
     }
 
     /*
@@ -72,7 +53,6 @@ class SparkLineLayout @JvmOverloads constructor(
     var sparkLineBezier: Float = SPARKLINE_BEZIER
     var markerWidth: Float = MARKER_WIDTH
     var markerHeight: Float = MARKER_HEIGHT
-    var markerCornerRadius: Float = MARKER_CORNER_RADIUS
     var markerBackgroundColor: Int = MARKER_BACKGROUND_COLOR
     var markerBorderColor: Int = MARKER_BORDER_COLOR
     var markerBorderSize: Float = MARKER_BORDER_SIZE
@@ -82,8 +62,6 @@ class SparkLineLayout @JvmOverloads constructor(
     var lineSplitLeftColor = LINE_SPLIT_LEFT_COLOR
     var lineSplitRightColor = LINE_SPLIT_RIGHT_COLOR
     var isGradientLine = IS_GRADIENT_LINE
-    var splitLineMode = SPLIT_LINE_MODE
-    var splitDotsMode = SPLIT_DOTS_MODE
 
     /*
     Paint
@@ -93,7 +71,6 @@ class SparkLineLayout @JvmOverloads constructor(
     private var paintMarkerStroke: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var paintLineLeft: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var paintLineRight: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private var paintSparkLineFill: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     /*
     Path
@@ -101,7 +78,6 @@ class SparkLineLayout @JvmOverloads constructor(
     private var pathSparkLine: Path = Path()
     private var pathLineLeft: Path = Path()
     private var pathLineRight: Path = Path()
-    private var pathSparkLineFill: Path = Path()
 
     /*
     Data
@@ -141,12 +117,6 @@ class SparkLineLayout @JvmOverloads constructor(
 
             markerHeight =
                 styledAttrs.getDimension(R.styleable.SparkLineLayout_s_marker_height, MARKER_HEIGHT)
-
-            markerCornerRadius =
-                styledAttrs.getDimension(
-                    R.styleable.SparkLineLayout_s_marker_radius,
-                    MARKER_CORNER_RADIUS
-                )
 
             markerBackgroundColor = styledAttrs.getColor(
                 R.styleable.SparkLineLayout_s_marker_background_color,
@@ -198,20 +168,6 @@ class SparkLineLayout @JvmOverloads constructor(
                 LINE_SPLIT_RIGHT_COLOR
             )
 
-            splitLineMode = SplitLineMode.fromId(
-                styledAttrs.getInt(
-                    R.styleable.SparkLineLayout_s_split_line_mode,
-                    SPLIT_LINE_MODE.id
-                )
-            )
-
-            splitDotsMode = SplitDotsMode.fromId(
-                styledAttrs.getInt(
-                    R.styleable.SparkLineLayout_s_split_dots_mode,
-                    SPLIT_DOTS_MODE.id
-                )
-            )
-
             styledAttrs.recycle()
         }
 
@@ -223,18 +179,6 @@ class SparkLineLayout @JvmOverloads constructor(
                 )
             )
 
-        } else {
-            //random data
-            val randomData: ArrayList<Int> = arrayListOf()
-            for (i in 0..10) {
-                val random = Random.nextInt(25)
-                randomData.add(random)
-            }
-            setData(
-                arrayListOf(
-                    298, 46, 87, 178, 446, 1167, 1855, 1543, 662, 1583
-                )
-            )
         }
     }
 
@@ -288,18 +232,6 @@ class SparkLineLayout @JvmOverloads constructor(
         return result
     }
 
-    fun setData(arrayData: ArrayList<Int>) {
-        inputData.clear()
-        data.clear()
-        inputData = arrayData
-
-        val num = getCountNumForMaxNum(inputData.max() ?: 0)
-
-        inputData.forEach {
-            data.add(it * num)
-        }
-    }
-
     private fun getCountNumForMaxNum(num: Int): Float {
         var n = 0.1F
         return if (num > 100) {
@@ -316,6 +248,17 @@ class SparkLineLayout @JvmOverloads constructor(
         }
     }
 
+    fun setData(arrayData: ArrayList<Int>) {
+        inputData.clear()
+        data.clear()
+        inputData = arrayData
+
+        val num = getCountNumForMaxNum(inputData.max() ?: 0)
+
+        inputData.forEach {
+            data.add(it * num)
+        }
+    }
 
     private fun initPaint() {
         paintSparkLine.color = sparkLineColor
@@ -351,9 +294,6 @@ class SparkLineLayout @JvmOverloads constructor(
         paintLineRight.strokeWidth = sparkLineThickness
         paintLineRight.strokeCap = Paint.Cap.ROUND
         paintLineRight.style = Paint.Style.STROKE
-
-        paintSparkLineFill.style = Paint.Style.FILL
-        paintSparkLineFill.color = sparkLineColor
     }
 
     private fun initLocalVars() {
@@ -403,89 +343,6 @@ class SparkLineLayout @JvmOverloads constructor(
         }
 
         canvas.drawPath(pathSparkLine, paintSparkLine)
-        invalidate()
-    }
-
-    private fun getPrevVal(index: Int): Float {
-        return (when {
-            index > 0 -> data[index - 1] - dataMin
-            else -> data[index] - dataMin
-        }).toFloat()
-    }
-
-    private fun getNextVal(index: Int): Float {
-        return (if (index < data.size - 1) {
-            data[index + 1] - dataMin
-        } else {
-            data[index] - dataMin
-        }).toFloat()
-    }
-
-    private fun getPrevD(xStart: Float, index: Int, prevVal: Float): PointF {
-        return PointF(
-            (xStart - (xStart - xStep)) * sparkLineBezier,
-            ((data[index] - dataMin) - prevVal) * sparkLineBezier
-        )
-    }
-
-    private fun getCurD(xStart: Float, index: Int, nextVal: Float): PointF {
-        return PointF(
-            ((xStart + xStep) - xStart) * sparkLineBezier,
-            (nextVal - (data[index] - dataMin)) * sparkLineBezier
-        )
-    }
-
-    private fun getControlPointLeft(xStart: Float, prevVal: Float, prevD: PointF): PointF {
-        return PointF(
-            (xStart - xStep) + prevD.x,
-            (((measuredHeight - heightPadding) - (prevVal * yStep)) - prevD.y)
-        )
-    }
-
-    private fun getControlPointRight(xStart: Float, index: Int, curD: PointF): PointF {
-        return PointF(
-            xStart - curD.x,
-            ((measuredHeight - heightPadding) - ((data[index] - dataMin) * yStep)) + curD.y
-        )
-    }
-
-    private fun getCurrentPoint(xStart: Float, index: Int): PointF {
-        return PointF(xStart, (measuredHeight - heightPadding) - ((data[index] - dataMin) * yStep))
-    }
-
-    private fun drawMarkers(canvas: Canvas) {
-        for (i in 0 until data.size) {
-            val x: Float = i * xStep
-            val y: Float = (measuredHeight - heightPadding) - ((data[i] - dataMin) * yStep)
-
-            drawMarker(canvas, x + heightPadding, y)
-        }
-    }
-
-    private fun drawMarker(canvas: Canvas, x: Float, y: Float) {
-        if (markerIsCircleStyle) {
-            canvas.drawCircle(x, y, markerWidth / 2, paintMarker)
-            if (markerBorderSize > 0) {
-                canvas.drawCircle(x, y, markerWidth / 2, paintMarkerStroke)
-            }
-        } else {
-            canvas.drawRect(
-                x - (markerWidth / 2),
-                y - (markerHeight / 2),
-                x + (markerWidth / 2),
-                y + (markerHeight / 2),
-                paintMarker
-            )
-            if (markerBorderSize > 0) {
-                canvas.drawRect(
-                    x - (markerWidth / 2),
-                    y - (markerHeight / 2),
-                    x + (markerWidth / 2),
-                    y + (markerHeight / 2),
-                    paintMarkerStroke
-                )
-            }
-        }
     }
 
     private fun drawSplitLine(canvas: Canvas) {
@@ -548,6 +405,88 @@ class SparkLineLayout @JvmOverloads constructor(
 
         canvas.drawPath(pathLineRight, paintLineRight)
         canvas.drawPath(pathLineLeft, paintLineLeft)
+    }
+
+    private fun drawMarkers(canvas: Canvas) {
+        for (i in 0 until data.size) {
+            val x: Float = i * xStep
+            val y: Float = (measuredHeight - heightPadding) - ((data[i] - dataMin) * yStep)
+
+            drawMarker(canvas, x + heightPadding, y)
+        }
+    }
+
+    private fun drawMarker(canvas: Canvas, x: Float, y: Float) {
+        if (markerIsCircleStyle) {
+            canvas.drawCircle(x, y, markerWidth / 2, paintMarker)
+            if (markerBorderSize > 0) {
+                canvas.drawCircle(x, y, markerWidth / 2, paintMarkerStroke)
+            }
+        } else {
+            canvas.drawRect(
+                x - (markerWidth / 2),
+                y - (markerHeight / 2),
+                x + (markerWidth / 2),
+                y + (markerHeight / 2),
+                paintMarker
+            )
+            if (markerBorderSize > 0) {
+                canvas.drawRect(
+                    x - (markerWidth / 2),
+                    y - (markerHeight / 2),
+                    x + (markerWidth / 2),
+                    y + (markerHeight / 2),
+                    paintMarkerStroke
+                )
+            }
+        }
+    }
+
+    private fun getPrevVal(index: Int): Float {
+        return (when {
+            index > 0 -> data[index - 1] - dataMin
+            else -> data[index] - dataMin
+        }).toFloat()
+    }
+
+    private fun getNextVal(index: Int): Float {
+        return (if (index < data.size - 1) {
+            data[index + 1] - dataMin
+        } else {
+            data[index] - dataMin
+        }).toFloat()
+    }
+
+    private fun getPrevD(xStart: Float, index: Int, prevVal: Float): PointF {
+        return PointF(
+            (xStart - (xStart - xStep)) * sparkLineBezier,
+            ((data[index] - dataMin) - prevVal) * sparkLineBezier
+        )
+    }
+
+    private fun getCurD(xStart: Float, index: Int, nextVal: Float): PointF {
+        return PointF(
+            ((xStart + xStep) - xStart) * sparkLineBezier,
+            (nextVal - (data[index] - dataMin)) * sparkLineBezier
+        )
+    }
+
+    private fun getControlPointLeft(xStart: Float, prevVal: Float, prevD: PointF): PointF {
+        return PointF(
+            (xStart - xStep) + prevD.x,
+            (((measuredHeight - heightPadding) - (prevVal * yStep)) - prevD.y)
+        )
+    }
+
+    private fun getControlPointRight(xStart: Float, index: Int, curD: PointF): PointF {
+        return PointF(
+            xStart - curD.x,
+            ((measuredHeight - heightPadding) - ((data[index] - dataMin) * yStep)) + curD.y
+        )
+    }
+
+    private fun getCurrentPoint(xStart: Float, index: Int): PointF {
+        return PointF(xStart, (measuredHeight - heightPadding) - ((data[index] - dataMin) * yStep))
     }
 
     private fun calculateSplitNumPoint(): Int {
